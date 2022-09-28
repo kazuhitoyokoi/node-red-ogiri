@@ -1,0 +1,410 @@
+[
+    {
+        "id": "ef80997db35cdbf1",
+        "type": "tab",
+        "label": "シンプルな実装",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8e853624a759773d",
+        "type": "tab",
+        "label": "functionノードで実装",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "b81139106d92246b",
+        "type": "tab",
+        "label": "sqliteノードで実装",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5ff21a0bb5a88a17",
+        "type": "tab",
+        "label": "alasqlノードで実装",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c9f979beb309c734",
+        "type": "sqlitedb",
+        "db": "test2.db",
+        "mode": "RO"
+    },
+    {
+        "id": "9426283c52d9304e",
+        "type": "inject",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 100,
+        "wires": [
+            [
+                "4acd17c883509c56"
+            ]
+        ]
+    },
+    {
+        "id": "ac9e8d5aab55a84e",
+        "type": "debug",
+        "z": "ef80997db35cdbf1",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "4acd17c883509c56",
+        "type": "file in",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "filename": "test.csv",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 360,
+        "y": 100,
+        "wires": [
+            [
+                "7554b2bccbc28b49"
+            ]
+        ]
+    },
+    {
+        "id": "7554b2bccbc28b49",
+        "type": "csv",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "7fb604b886cf76cf"
+            ]
+        ]
+    },
+    {
+        "id": "7fb604b886cf76cf",
+        "type": "switch",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "property": "$millis()",
+        "propertyType": "jsonata",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "$toMillis(payload.a, '[Y0001]/[M01]/[D01]')",
+                "vt": "jsonata"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 270,
+        "y": 180,
+        "wires": [
+            [
+                "ac9e8d5aab55a84e"
+            ]
+        ],
+        "info": "https://www.stedi.com/docs/mappings/jsonata-functions/date-time#dollartomillis"
+    },
+    {
+        "id": "2dd12fa1b40f293e",
+        "type": "inject",
+        "z": "8e853624a759773d",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 80,
+        "wires": [
+            [
+                "9907214c64bd4c01"
+            ]
+        ]
+    },
+    {
+        "id": "bdead255daeff782",
+        "type": "debug",
+        "z": "8e853624a759773d",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 320,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "9907214c64bd4c01",
+        "type": "function",
+        "z": "8e853624a759773d",
+        "name": "function 1",
+        "func": "fs.createReadStream('test.csv')\n    .pipe(csv.parse({columns: true}, function (err, data) {\n        if (err) throw err;\n        data.forEach(line => {\n            let a = line.a.split('/');\n            let today = getTime(new Date());\n            let lineDate = getTime(new Date(a[0], a[1]-1, a[2]));\n            if (today <= lineDate) node.send({ \"payload\": line });\n        })\n}));",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "fs",
+                "module": "fs"
+            },
+            {
+                "var": "csv",
+                "module": "csv"
+            },
+            {
+                "var": "getTime",
+                "module": "date-fns/getTime"
+            }
+        ],
+        "x": 320,
+        "y": 80,
+        "wires": [
+            [
+                "bdead255daeff782"
+            ]
+        ]
+    },
+    {
+        "id": "75a51143f8a67fcf",
+        "type": "inject",
+        "z": "b81139106d92246b",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "b3ed95fd64ac4c9b"
+            ]
+        ]
+    },
+    {
+        "id": "d4df59aa61c265b3",
+        "type": "debug",
+        "z": "b81139106d92246b",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "b3ed95fd64ac4c9b",
+        "type": "sqlite",
+        "z": "b81139106d92246b",
+        "mydb": "c9f979beb309c734",
+        "sqlquery": "fixed",
+        "sql": "SELECT date(a) AS a FROM test2 WHERE date(CURRENT_TIMESTAMP) < date(a);",
+        "name": "",
+        "x": 340,
+        "y": 120,
+        "wires": [
+            [
+                "62caeec528365d65"
+            ]
+        ]
+    },
+    {
+        "id": "4e62acbb8172c0e5",
+        "type": "comment",
+        "z": "b81139106d92246b",
+        "name": "準備",
+        "info": "1. 日付を「YYYY/MM/DD」形式から「YYYY-MM-DD」形式へ変更してtest2.csvとして保存\n2. sqlite3コマンドでCSVファイルを読み込み、dbファイルとして保存\n   sqlite3 test2.db\n   .import test2.csv test2",
+        "x": 110,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "62caeec528365d65",
+        "type": "split",
+        "z": "b81139106d92246b",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 190,
+        "y": 200,
+        "wires": [
+            [
+                "d4df59aa61c265b3"
+            ]
+        ]
+    },
+    {
+        "id": "79b43eca1c36932d",
+        "type": "inject",
+        "z": "5ff21a0bb5a88a17",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 120,
+        "wires": [
+            [
+                "bcea64825f8328cd"
+            ]
+        ]
+    },
+    {
+        "id": "bcea64825f8328cd",
+        "type": "alasql",
+        "z": "5ff21a0bb5a88a17",
+        "name": "",
+        "query": "SELECT date(a) AS a FROM csv('test2.csv') WHERE date(CURRENT_TIMESTAMP) < date(a);",
+        "x": 350,
+        "y": 120,
+        "wires": [
+            [
+                "f02e2e56ba3eb3b7"
+            ]
+        ]
+    },
+    {
+        "id": "2c69494a11d43309",
+        "type": "debug",
+        "z": "5ff21a0bb5a88a17",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 340,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f02e2e56ba3eb3b7",
+        "type": "split",
+        "z": "5ff21a0bb5a88a17",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 190,
+        "y": 200,
+        "wires": [
+            [
+                "2c69494a11d43309"
+            ]
+        ]
+    },
+    {
+        "id": "60bfe6022225f860",
+        "type": "comment",
+        "z": "5ff21a0bb5a88a17",
+        "name": "準備",
+        "info": "1. 日付を「YYYY/MM/DD」形式から「YYYY-MM-DD」形式へ変更してtest2.csvとして保存",
+        "x": 130,
+        "y": 60,
+        "wires": []
+    }
+]
