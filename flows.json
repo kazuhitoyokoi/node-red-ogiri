@@ -1,0 +1,210 @@
+[
+    {
+        "id": "ef80997db35cdbf1",
+        "type": "tab",
+        "label": "フロー 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8e853624a759773d",
+        "type": "tab",
+        "label": "functionノードで実装",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9426283c52d9304e",
+        "type": "inject",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 100,
+        "wires": [
+            [
+                "4acd17c883509c56"
+            ]
+        ]
+    },
+    {
+        "id": "ac9e8d5aab55a84e",
+        "type": "debug",
+        "z": "ef80997db35cdbf1",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "4acd17c883509c56",
+        "type": "file in",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "filename": "test.csv",
+        "filenameType": "str",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "allProps": false,
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "7554b2bccbc28b49"
+            ]
+        ]
+    },
+    {
+        "id": "7554b2bccbc28b49",
+        "type": "csv",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "sep": ",",
+        "hdrin": true,
+        "hdrout": "none",
+        "multi": "one",
+        "ret": "\\n",
+        "temp": "",
+        "skip": "0",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "7fb604b886cf76cf"
+            ]
+        ]
+    },
+    {
+        "id": "7fb604b886cf76cf",
+        "type": "switch",
+        "z": "ef80997db35cdbf1",
+        "name": "",
+        "property": "$millis()",
+        "propertyType": "jsonata",
+        "rules": [
+            {
+                "t": "lte",
+                "v": "$toMillis(payload.a, '[Y0001]/[M01]/[D01]')",
+                "vt": "jsonata"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 290,
+        "y": 180,
+        "wires": [
+            [
+                "ac9e8d5aab55a84e"
+            ]
+        ],
+        "info": "https://www.stedi.com/docs/mappings/jsonata-functions/date-time#dollartomillis"
+    },
+    {
+        "id": "2dd12fa1b40f293e",
+        "type": "inject",
+        "z": "8e853624a759773d",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 80,
+        "wires": [
+            [
+                "9907214c64bd4c01"
+            ]
+        ]
+    },
+    {
+        "id": "bdead255daeff782",
+        "type": "debug",
+        "z": "8e853624a759773d",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 260,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "9907214c64bd4c01",
+        "type": "function",
+        "z": "8e853624a759773d",
+        "name": "function 1",
+        "func": "fs.createReadStream('test.csv')\n    .pipe(csv.parse({columns: true}, function (err, data) {\n        if (err) throw err;\n        data.forEach(line => {\n            let a = line.a.split('/');\n            let today = getTime(new Date());\n            let lineDate = getTime(new Date(a[0], a[1]-1, a[2]));\n            if (today <= lineDate) node.send({ \"payload\": line });\n        })\n}));",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [
+            {
+                "var": "fs",
+                "module": "fs"
+            },
+            {
+                "var": "csv",
+                "module": "csv"
+            },
+            {
+                "var": "getTime",
+                "module": "date-fns/getTime"
+            }
+        ],
+        "x": 200,
+        "y": 160,
+        "wires": [
+            [
+                "bdead255daeff782"
+            ]
+        ]
+    }
+]
