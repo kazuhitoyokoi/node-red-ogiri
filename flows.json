@@ -202,7 +202,7 @@
         "type": "function",
         "z": "8e853624a759773d",
         "name": "function 1",
-        "func": "fs.createReadStream('test.csv')\n    .pipe(csv.parse({columns: true}, function (err, data) {\n        if (err) throw err;\n        data.forEach(line => {\n            let a = line.a.split('/');\n            let today = getTime(new Date());\n            let lineDate = getTime(new Date(a[0], a[1]-1, a[2]));\n            if (today <= lineDate) node.send({ \"payload\": line });\n        })\n}));",
+        "func": "fs.createReadStream('./test.csv')\n    .pipe(csv.parse({columns: true}, function (err, data) {\n        if (err) throw err;\n        data.forEach(line => {\n            let a = line.a.split('/');\n            let today = getTime(new Date());\n            let lineDate = getTime(new Date(a[0], a[1]-1, a[2]));\n            if (today <= lineDate) node.send({ \"payload\": line });\n        })\n}));",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
