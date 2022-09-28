@@ -3,8 +3,12 @@
     "description": "A Node-RED Project",
     "version": "0.0.1",
     "dependencies": {
+        "node-red": ">=3.0.2",
         "node-red-contrib-alasql": "2.0.1",
         "node-red-node-sqlite": "1.0.3"
+    },
+    "scripts": {
+        "start": "node-red flow.json"
     },
     "node-red": {
         "settings": {
