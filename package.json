@@ -8,7 +8,7 @@
         "node-red-node-sqlite": "1.0.3"
     },
     "scripts": {
-        "start": "node-red flow.json"
+        "start": "node-red flows.json"
     },
     "node-red": {
         "settings": {
