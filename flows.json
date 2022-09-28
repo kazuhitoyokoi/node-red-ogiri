@@ -2,7 +2,7 @@
     {
         "id": "ef80997db35cdbf1",
         "type": "tab",
-        "label": "フロー 1",
+        "label": "シンプルな実装",
         "disabled": false,
         "info": "",
         "env": []
@@ -26,7 +26,7 @@
     {
         "id": "5ff21a0bb5a88a17",
         "type": "tab",
-        "label": "フロー 3",
+        "label": "alasqlノードで実装",
         "disabled": false,
         "info": "",
         "env": []
@@ -340,7 +340,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 240,
+        "x": 180,
         "y": 120,
         "wires": [
             [
@@ -353,12 +353,12 @@
         "type": "alasql",
         "z": "5ff21a0bb5a88a17",
         "name": "",
-        "query": "SELECT a FROM csv('test2.csv') ",
-        "x": 410,
-        "y": 180,
+        "query": "SELECT date(a) AS a FROM csv('test2.csv') WHERE date(CURRENT_TIMESTAMP) < date(a);",
+        "x": 350,
+        "y": 120,
         "wires": [
             [
-                "2c69494a11d43309"
+                "f02e2e56ba3eb3b7"
             ]
         ]
     },
@@ -374,8 +374,37 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 620,
+        "x": 340,
         "y": 200,
+        "wires": []
+    },
+    {
+        "id": "f02e2e56ba3eb3b7",
+        "type": "split",
+        "z": "5ff21a0bb5a88a17",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 190,
+        "y": 200,
+        "wires": [
+            [
+                "2c69494a11d43309"
+            ]
+        ]
+    },
+    {
+        "id": "60bfe6022225f860",
+        "type": "comment",
+        "z": "5ff21a0bb5a88a17",
+        "name": "準備",
+        "info": "1. 日付を「YYYY/MM/DD」形式から「YYYY-MM-DD」形式へ変更してtest2.csvとして保存",
+        "x": 130,
+        "y": 60,
         "wires": []
     }
 ]
